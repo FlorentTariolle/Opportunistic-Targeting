@@ -24,10 +24,11 @@ echo "MPS start exit code: $MPS_EXIT"
 
 echo "=== Running 2 parallel GPU workers ==="
 python -u -c "
-import torch, time
+import torch
+from torchvision.models import resnet18, ResNet18_Weights
 device = torch.device('cuda')
 x = torch.randn(1, 3, 224, 224, device=device)
-model = torch.hub.load('pytorch/vision', 'resnet18', weights='IMAGENET1K_V1').to(device).eval()
+model = resnet18(weights=ResNet18_Weights.IMAGENET1K_V1).to(device).eval()
 for i in range(50):
     with torch.no_grad():
         model(x)
@@ -35,10 +36,11 @@ print('Worker A done')
 " &
 
 python -u -c "
-import torch, time
+import torch
+from torchvision.models import resnet18, ResNet18_Weights
 device = torch.device('cuda')
 x = torch.randn(1, 3, 224, 224, device=device)
-model = torch.hub.load('pytorch/vision', 'resnet18', weights='IMAGENET1K_V1').to(device).eval()
+model = resnet18(weights=ResNet18_Weights.IMAGENET1K_V1).to(device).eval()
 for i in range(50):
     with torch.no_grad():
         model(x)
