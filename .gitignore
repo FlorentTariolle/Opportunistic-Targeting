@@ -2,3 +2,8 @@ __pycache__/
 .claude/
 /models/
 CLAUDE.md
+
+# SLURM job artifacts
+error.*
+output.*
+slurm/logs/
