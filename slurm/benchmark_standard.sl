@@ -2,11 +2,11 @@
 #SBATCH -J "bench_std"
 #SBATCH -o slurm/logs/bench_std.out
 #SBATCH -e slurm/logs/bench_std.err
-#SBATCH -p ar_a100
-#SBATCH --gres=gpu:a100:1
+#SBATCH -p ar_mig
+#SBATCH --gres=gpu:a100_2g.20gb:1
 #SBATCH -n 1
-#SBATCH --cpus-per-gpu 8
-#SBATCH --mem 64G
+#SBATCH --cpus-per-gpu 4
+#SBATCH --mem 8G
 #SBATCH --time=08:00:00
 
 # Full standard benchmark: 5 models x 3 methods x 100 images x 3 modes
