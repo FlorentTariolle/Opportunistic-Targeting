@@ -44,3 +44,10 @@ wait
 # Stop MPS
 echo quit | nvidia-cuda-mps-control
 echo "All workers finished at $(date)"
+
+# Auto-requeue if there's still work to do
+TOTAL=$(wc -l < results/benchmark_ablation_naive_robust.csv)
+if [ "$TOTAL" -lt 401 ]; then
+    echo "Only $((TOTAL - 1))/400 done, resubmitting..."
+    sbatch slurm/ablation_naive_robust.sl
+fi
