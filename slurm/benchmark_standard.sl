@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH -J "bench_std"
-#SBATCH -o slurm/logs/bench_std.out
-#SBATCH -e slurm/logs/bench_std.err
+#SBATCH -o slurm/logs/bench_std.%J.out
+#SBATCH -e slurm/logs/bench_std.%J.err
 #SBATCH -p ar_mig
 #SBATCH --gres=gpu:a100_2g.20gb:1
 #SBATCH -n 1
@@ -39,7 +39,7 @@ for i in $(seq 0 $((N_WORKERS - 1))); do
     END=$(( (i + 1) * CHUNK ))
     [ $END -gt $N_IMAGES ] && END=$N_IMAGES
     [ $START -ge $N_IMAGES ] && continue
-    timeout 28500 python -u benchmarks/benchmark.py --image-start $START --image-end $END --source standard > /dev/null 2>&1 &
+    timeout 28500 python -u benchmarks/benchmark.py --image-start $START --image-end $END --source standard > /dev/null 2>slurm/logs/worker_${i}.err &
 done
 wait
 
