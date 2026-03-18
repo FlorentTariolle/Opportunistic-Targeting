@@ -1,0 +1,159 @@
+\documentclass{cap2026}
+% Use \documentclass[french]{cap2026} if you want to load the french version of the template.
+% Note that if you choose to use the french option, you might encounter some unexpected behaviors, for example if you are using colons (:) in your labels.
+% Remove the french option if you want to load the english version of the template.
+
+% The following packages are already loaded:
+% authblk
+% hyperref
+% natbib - Use the option no-natbib to avoid loading it (\documentclass[no-natbib]{cap2026})
+% geometry with the options width=17cm and height=24cm
+% amsthm
+% and some environments are already defined and automatically switch between french and english: theorem, definition, lemma, corollary, proposition. 
+
+\usepackage{fancyvrb}
+\usepackage{amsfonts} 
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{booktabs} % for better tables
+\usepackage{cleveref}
+
+\title{Example of an article in the CAp'2026 format}
+\author[1]{Author A\thanks{If you really want to include your email
+    or web page...: A.A@univ-x.fr}}
+\author[2]{Author B}
+\affil[1]{University X, CNRS}
+\affil[2]{University Y, CNRS and Inria}
+
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+  This style is very simple. You can add keywords below the abstract using the \texttt{keywords} command. The number of pages is limited to 8 or 12 pages (depending on the type of paper), excluding references.
+  
+\medskip
+
+\keywords{Style, \LaTeX, CAp}
+\end{abstract}
+
+
+\section{The header}
+\label{seclentete}
+
+Nothing special to mention; this year we are opting for a single-column style. The \texttt{french} option automatically switches the language of the paper to French. Some packages are already loaded by default by the style:
+
+\begin{Verbatim}
+\usepackage{authblk}
+\usepackage{hyperref}
+\usepackage{natbib}
+\usepackage[width=17cm,height=24cm]{geometry}
+\usepackage{amsthm}
+\end{Verbatim}
+
+The \texttt{authblk} package is used for affiliations. The \texttt{hyperref} package makes navigation in the document easier. The \texttt{natbib} package is used by default to manage references but can, if needed, be disabled using the \texttt{no-natbib} option of the class. The \texttt{geometry} package manages the document margins. They must not be modified. Finally, the \texttt{amsthm} package manages theorem environments (the \texttt{theorem}, \texttt{definition}, \texttt{lemma}, \texttt{proposition}, and \texttt{corollary} environments are already available).
+
+You can add any packages or macros you want, for example:
+\begin{Verbatim}
+  \usepackage{fancyvrb}
+  \usepackage{amsfonts} 
+  \usepackage{amssymb}
+  \usepackage{amsmath}
+\end{Verbatim}
+
+\section{The body}
+\label{secle-corps}
+
+The \texttt{theorem}, \texttt{definition}, \texttt{lemma}, \texttt{proposition}, and \texttt{corollary} environments are already available and automatically switch language with the \texttt{french} option of the class.
+
+\begin{theorem}[Bla]
+  This is a nice theorem.
+\end{theorem}
+
+Bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla
+
+
+\section{Figures}
+\label{secles-figures}
+You can add tables (see \cref{tabtab}) and figures (see \cref{figcode}).
+
+\begin{table}
+  \centering  
+  \begin{tabular}{llll}
+    \toprule
+    \textbf{Column 1} & \textbf{Column 2} & \textbf{Column 3} &
+    \textbf{Column 4} \\ \midrule
+    1 & 2 & 3 & 4 \\ 
+    1 & 2 & 3 & 4 \\ 
+    1 & 2 & 3 & 4 \\ 
+    1 & 2 & 3 & 4 \\ \bottomrule
+  \end{tabular}
+  \caption{An example table.\label{tabtab}}
+\end{table}
+
+\begin{SaveVerbatim}{codefigure}
+\begin{table}
+  \centering  
+  \begin{tabular}{llll}
+    \toprule
+    \textbf{Column 1} & \textbf{Column 2} & \textbf{Column 3} &
+    \textbf{Column 4} \\ \midrule
+    1 & 2 & 3 & 4 \\ 
+    1 & 2 & 3 & 4 \\ 
+    1 & 2 & 3 & 4 \\ 
+    1 & 2 & 3 & 4 \\ \bottomrule
+  \end{tabular}
+  \caption{An example table.\label{tabtab}}
+\end{table}
+\end{SaveVerbatim}
+
+\begin{figure}
+  \centering
+  \UseVerbatim[frame=single]{codefigure}
+  \caption{An example figure.\label{figcode}}
+\end{figure}
+
+Bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla
+
+
+
+\section{Bibliography}
+\label{secla-bibliographie}
+
+We recommend using \texttt{natbib} with the \texttt{apalike} style, but we do not require it. The advantage of \texttt{natbib} is that it automatically manages citations in the text, for example~\citet{paper1}, and in parentheses, for example~\citep{DD14a}.
+
+Bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla
+
+\section{Without \LaTeX}
+\label{secsans-latex}
+
+If you do not use \LaTeX, you can follow the dimensions given at the beginning of this document and try to find a readable font.
+
+
+\bibliographystyle{apalike}
+\bibliography{cap2026}
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
