@@ -21,6 +21,8 @@ elif echo "$HEADER" | grep -q "^method,t_value"; then
     FORMAT="ablation"
 elif echo "$HEADER" | grep -q "^method,condition"; then
     FORMAT="target_selection"
+elif echo "$HEADER" | grep -q "^method,image,true_label,mode,seed"; then
+    FORMAT="multiseed"
 else
     FORMAT="unknown"
 fi
@@ -64,6 +66,15 @@ tail -n 0 -f "$CSV" | while IFS=, read -r line; do
         iterations=$(echo "$line" | cut -d, -f6)
         success=$(echo "$line" | cut -d, -f7)
         label="$method $condition | $image | tgt=$target"
+    elif [ "$FORMAT" = "multiseed" ]; then
+        # method,image,true_label,mode,seed,iterations,success,...
+        method=$(echo "$line" | cut -d, -f1)
+        image=$(echo "$line" | cut -d, -f2)
+        mode=$(echo "$line" | cut -d, -f4)
+        seed=$(echo "$line" | cut -d, -f5)
+        iterations=$(echo "$line" | cut -d, -f6)
+        success=$(echo "$line" | cut -d, -f7)
+        label="$method $mode s=$seed | $image"
     else
         iterations=$(echo "$line" | cut -d, -f5)
         success=$(echo "$line" | cut -d, -f6)
