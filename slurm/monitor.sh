@@ -19,6 +19,8 @@ if echo "$HEADER" | grep -q "^model,"; then
     FORMAT="standard"
 elif echo "$HEADER" | grep -q "^method,t_value"; then
     FORMAT="ablation"
+elif echo "$HEADER" | grep -q "^method,condition"; then
+    FORMAT="target_selection"
 else
     FORMAT="unknown"
 fi
@@ -53,6 +55,15 @@ tail -n 0 -f "$CSV" | while IFS=, read -r line; do
         iterations=$(echo "$line" | cut -d, -f5)
         success=$(echo "$line" | cut -d, -f6)
         label="$method T=$t_value | $image"
+    elif [ "$FORMAT" = "target_selection" ]; then
+        # method,condition,image,true_label,target_class,iterations,success,...
+        method=$(echo "$line" | cut -d, -f1)
+        condition=$(echo "$line" | cut -d, -f2)
+        image=$(echo "$line" | cut -d, -f3)
+        target=$(echo "$line" | cut -d, -f5)
+        iterations=$(echo "$line" | cut -d, -f6)
+        success=$(echo "$line" | cut -d, -f7)
+        label="$method $condition | $image | tgt=$target"
     else
         iterations=$(echo "$line" | cut -d, -f5)
         success=$(echo "$line" | cut -d, -f6)
