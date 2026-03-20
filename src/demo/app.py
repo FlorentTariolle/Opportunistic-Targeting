@@ -417,20 +417,20 @@ def run_attack(
         mean_l1 = total_perturbation.abs().mean().item()
 
         # Build compact result text
-        status_icon = '✓' if is_successful else '✗'
+        status_word = "**Success**" if is_successful else "**Failure**"
 
         if opportunistic and switch_iteration is not None:
-            mode_line = f"**OT** (locked at T={switch_iteration})"
+            mode_line = f"OT (T={switch_iteration})"
         elif opportunistic:
-            mode_line = "**OT** (no lock)"
+            mode_line = "OT (no lock)"
         elif targeted and target_class is not None:
             target_label = get_imagenet_label(target_class)
-            mode_line = f"**Targeted** → {target_class} ({target_label})"
+            mode_line = f"Targeted → {target_class} ({target_label})"
         else:
-            mode_line = "**Untargeted**"
+            mode_line = "Untargeted"
 
         result_text = (
-            f"{status_icon} {mode_line} | {budget_display}\n\n"
+            f"{status_word} — {mode_line} | {budget_display}\n\n"
             f"**Original:** {original_class} ({original_label}) — {original_confidence:.2%}\n\n"
             f"**Result:** {adv_class} ({adv_label}) — {adv_confidence:.2%}\n\n"
             f"True: {original_confidence:.2%} → {final_true_confidence:.2%} ({loss_of_confidence:+.2%})\n\n"

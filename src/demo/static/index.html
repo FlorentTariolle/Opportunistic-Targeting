@@ -606,20 +606,61 @@ input[type="range"]::-moz-range-track {
 }
 
 /* Results text */
+/* Results text (pricing-card style) */
 .results-text {
     flex: 1;
     overflow-y: auto;
-    font-size: 0.8rem;
-    font-family: 'Outfit', sans-serif;
-    line-height: 1.7;
     min-height: 0;
     width: 100%;
-    color: var(--text-muted);
-    letter-spacing: 0.02em;
     align-self: flex-start;
-    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    font-family: 'Outfit', sans-serif;
 }
-.results-text strong { color: var(--text); font-weight: 500; }
+.results-text .res-header {
+    text-align: center;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--glass-border);
+    margin-bottom: 0.6rem;
+}
+.results-text .res-status {
+    font-size: 1.265rem;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+}
+.results-text .res-budget {
+    font-size: 0.86rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+    font-family: 'JetBrains Mono', monospace;
+}
+.results-text .res-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+.results-text .res-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+.results-text .res-row strong { color: var(--text); font-weight: 500; }
+.results-text .res-dot {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    display: grid;
+    place-content: center;
+    flex-shrink: 0;
+    background: var(--glass-border);
+    color: var(--text-muted);
+}
+.results-text .res-dot svg { width: 10px; height: 10px; }
+.results-text .res-dot.success { background: var(--text); color: var(--bg); }
+.results-text .res-dot.fail { background: #ef4444; color: #fff; }
 
 /* Spinner overlay */
 .spinner-overlay {
@@ -1307,12 +1348,34 @@ function setOutputImage(imgId, emptyId, base64) {
 
 function renderResult(text) {
     if (!text) return '';
-    return text
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/L∞/g, 'L<sub>∞</sub>')
-        .replace(/L2/g, 'L<sub>2</sub>')
-        .replace(/\n\n/g, '<br>')
-        .replace(/\n/g, '<br>');
+    // Parse the result text into structured HTML
+    var lines = text.split('\n\n').filter(Boolean);
+    if (lines.length === 0) return '';
+
+    // First line: status + budget (e.g. "✓ **OT** (locked at T=10) | 894 iterations / 10000")
+    var firstLine = lines[0];
+    var isSuccess = firstLine.includes('Success');
+    var statusText = firstLine.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    var parts = statusText.split(' | ');
+    var mode = parts[0] || '';
+    var budget = parts[1] || '';
+
+    var html = '<div class="res-header">';
+    html += '<div class="res-status">' + mode + '</div>';
+    if (budget) html += '<div class="res-budget">' + budget + '</div>';
+    html += '</div>';
+    html += '<div class="res-rows">';
+
+    // Remaining lines as rows
+    for (var i = 1; i < lines.length; i++) {
+        var line = lines[i]
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/L∞/g, 'L<sub>∞</sub>')
+            .replace(/L2/g, 'L<sub>2</sub>');
+        html += '<div class="res-row">' + line + '</div>';
+    }
+    html += '</div>';
+    return html;
 }
 
 // Listeners
