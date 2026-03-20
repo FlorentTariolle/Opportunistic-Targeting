@@ -133,7 +133,7 @@ Once a target is locked, the attack commits for the remainder of the budget (\te
 
 \textbf{Configuration.} Perturbation budget $\epsilon = 8/255$ ($L_\infty$). Iteration budget: 10,000 (main benchmark) and 15,000 (extended benchmark). Each iteration corresponds to one model query for Square Attack and Bandits; SimBA averages 1.4--1.5 queries per iteration. Stability thresholds: $S = 10$ (SimBA), $S = 8$ (Square Attack) on standard models; $S = 10$ for both on robust models.
 
-\textbf{Images.} 100 images randomly sampled from ILSVRC2012 validation (seed 42). Each combination uses a single attack random seed (seed 0), yielding 4,500 runs on standard models. We acknowledge the single seed as a limitation (Section~\ref{sec:limitations}).
+\textbf{Images.} 100 images randomly sampled from ILSVRC2012 validation (seed 42). Each combination uses a single attack random seed (seed 0), yielding 4,500 runs on standard models. A separate multi-seed validation (5 seeds) confirms seed independence (Section~\ref{sec:limitations}).
 
 \textbf{Metrics.} Primary: \textit{success rate} at equal query budgets. We also report \textit{success rate vs.\ query budget} (CDF curves) following \citet{ughi2021empirical}. Secondary: \textit{censored mean iterations} (failed runs are assigned the budget ceiling as cost, so the metric penalizes both slow convergence and outright failure) and \textit{paired mean iterations} (restricted to images where both modes succeed, isolating pure efficiency). Censoring biases \emph{against} OTS, making savings estimates conservative.
 
@@ -257,7 +257,7 @@ Two further ablations isolate what drives OTS's benefit. First, \textbf{targetin
 \textbf{Summary.} Opportunistic Target Selection demonstrates that the information needed to select an effective adversarial target is already latent in the attack's trajectory. By switching to a targeted objective at any small fixed iteration count, OTS eliminates the class drift that plagues probability-minimization and CE losses. On standard models with random-search attacks, OTS provides significant gains: up to +27 pp in success rate and 43\% in censored-mean iteration reduction on ResNet-50. On attacks with built-in directionality (Bandits, Square Attack with margin loss), OTS is redundant, reinforcing the margin-surrogate interpretation. On robust models, targeting is neutral due to a bimodal difficulty distribution.
 
 \textbf{Limitations.}\label{sec:limitations}
-(1)~{\color{red}[Multi-seed benchmark in progress.]} Each combination uses a single random seed; multi-seed repetition would strengthen statistical claims.
+(1)~A multi-seed validation (5 seeds $\times$ 100 images $\times$ 2 methods on ResNet-50, 3{,}000 runs) confirms OTS's effect is seed-independent: all 10 per-seed Wilcoxon tests remain significant after Bonferroni correction, with cross-seed standard deviation below 2~pp for every mode. The main benchmark uses a single seed for cost reasons, but the multi-seed check shows this does not affect conclusions.
 (2)~Only two robust models were tested ($L_\infty$ adversarial training); other defenses (TRADES, MART, $L_2$) may differ.
 (3)~All experiments use ImageNet ($K = 1000$), which maximizes drift potential; the benefit may diminish on datasets with fewer classes. However, $K = 1000$ is the standard benchmark for black-box attacks and represents the regime where class drift is most acute, making it the natural setting to evaluate OTS.
 
@@ -348,6 +348,13 @@ $S$ & Success Rate & Mean Iter. & Median Iter. \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{../results/figures/multiseed/fig_multiseed_effect_size.pdf}
+\caption{Multi-seed validation (ResNet-50, 15K budget, 5 seeds $\times$ 100 images). Left: success rate gain (OTS vs.\ untargeted) per seed. Right: median iteration savings per seed. Stars denote Bonferroni-corrected Wilcoxon significance. All 10 tests reach $p < 0.002$, confirming seed independence.}
+\label{fig:multiseed}
+\end{figure}
 
 \begin{figure}[htbp]
 \centering

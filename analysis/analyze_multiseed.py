@@ -476,7 +476,7 @@ def print_summary(df: pd.DataFrame, perseed: pd.DataFrame, pooled: pd.DataFrame)
     # Per-seed Wilcoxon tests
     print("\n--- Per-Seed Wilcoxon Tests (Untargeted vs Opportunistic) ---")
     header = (f"{'Method':<14} {'Seed':>4} {'N':>4} {'SR_unt':>7} {'SR_opp':>7} "
-              f"{'ΔSR':>6} {'Med_unt':>8} {'Med_opp':>8} {'Sav%':>6} "
+              f"{'dSR':>6} {'Med_unt':>8} {'Med_opp':>8} {'Sav%':>6} "
               f"{'W':>8} {'p':>9} {'p_adj':>8} {'Sig':>4}")
     print(header)
     print("-" * len(header))
@@ -491,8 +491,8 @@ def print_summary(df: pd.DataFrame, perseed: pd.DataFrame, pooled: pd.DataFrame)
     print("\n--- Pooled Wilcoxon Tests (all seeds) ---")
     for _, r in pooled.iterrows():
         print(f"{r['method']:<14} N={r['n_paired']:>4}  "
-              f"SR: {r['sr_unt']*100:.1f}% → {r['sr_opp']*100:.1f}% (Δ={r['sr_delta']*100:+.1f}pp)  "
-              f"Med: {r['med_unt']:.0f} → {r['med_opp']:.0f} ({r['savings_pct']:+.1f}%)  "
+              f"SR: {r['sr_unt']*100:.1f}% -> {r['sr_opp']*100:.1f}% (d={r['sr_delta']*100:+.1f}pp)  "
+              f"Med: {r['med_unt']:.0f} -> {r['med_opp']:.0f} ({r['savings_pct']:+.1f}%)  "
               f"p={r['w_p']:.4g} {r['sig']}")
 
     # Cross-seed consistency of significance
