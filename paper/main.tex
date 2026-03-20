@@ -226,7 +226,7 @@ Untargeted perturbations reach a terminal cosine similarity of only $0.174 \pm 0
 
 We extend the evaluation to adversarially-trained ImageNet classifiers from RobustBench \citep{salman2020adversarially,croce2021robustbench}: Salman2020Do\_R18 and Salman2020Do\_R50 (50 images, $S=10$). Success rates are flat across modes: SimBA achieves 22--28\% and Square Attack 56--70\%, with no statistically significant difference between untargeted, oracle, and OTS (all Bonferroni-corrected Wilcoxon $p > 0.09$). Sweeping $S \in \{10, \ldots, 20\}$ does not change the picture (Appendix~\ref{app:ablation-details}).
 
-\textbf{Interpretation.} The explanation lies in the difficulty distribution, not landscape smoothing. On standard ResNet-50, images span a range of difficulties including a ``medium'' zone (100--5,000 iterations) where directional commitment pays off. On robust ResNet-50, the distribution is \textbf{bimodal}: images either succeed in $<$100 iterations or fail at the budget ceiling, with only 9--10 images in the medium zone. The failure set is nearly identical across all three modes (22/21/21 failures). Targeting cannot rescue genuinely infeasible images. We verified that three confidence-landscape metrics (top-10 entropy, ranking volatility, confidence gap) show no significant difference between standard and robust models (Mann--Whitney $p > 0.05$), confirming that the landscapes are not measurably smoother; adversarial training compresses the difficulty spectrum into two extremes.
+\textbf{Interpretation.} The explanation lies in the difficulty distribution, not landscape smoothing. On standard ResNet-50, images span a range of difficulties including a ``medium'' zone (100--5,000 iterations) where directional commitment pays off. On robust ResNet-50, the distribution is \textbf{bimodal}: images either succeed in $<$100 iterations or fail at the budget ceiling, with only 9--10 images in the medium zone. The failure set is nearly identical across all three modes (22/21/21 failures). Targeting cannot rescue genuinely infeasible images; adversarial training compresses the difficulty spectrum into two extremes.
 
 % ============================================================================
 \section{Discussion and Conclusion}\label{sec:conclusion}
@@ -239,16 +239,17 @@ Two further ablations isolate what drives OTS's benefit. First, \textbf{targetin
 A \textbf{target-class overlap analysis} (Figure~\ref{fig:target-overlap}) clarifies why: SimBA locks onto the clean-image top-1 in 100\% of runs (small coordinate perturbations preserve the ranking), while Square Attack shows lower overlap (64\% at top-1) because random patches are more disruptive. This explains why exploration helps Square Attack but not SimBA.
 
 \subsection*{Limitations}\label{sec:limitations}
-(1)~Only two robust models were tested ($L_\infty$ adversarial training); other defenses may differ.
+(1)~Only two robust models were tested ($L_\infty$ adversarial training); other defenses may differ. \newline
 (2)~All experiments use ImageNet ($K = 1000$), the regime where class drift is most acute; the benefit may diminish with fewer classes.
 
 \subsection*{Future Work}
-Testing on settings where switch timing may matter more (larger $\epsilon$, CIFAR-10 with $K=10$) is a natural next step. An adaptive re-locking variant that releases the lock when the locked class drops in ranking could recover from bad early commits on harder images, directly testing whether the irreversible lock is optimal or merely simpler. Finally, evaluating OTS under $L_2$ perturbation budgets would probe whether drift dynamics differ with smoother, more global perturbations.
+Testing on settings where switch timing may matter more (larger $\epsilon$, CIFAR-10 with $K=10$) is a natural next step. An adaptive re-locking variant that releases the lock when the locked class drops in ranking could recover from bad early commits, and evaluating OTS under $L_2$ budgets would probe whether drift dynamics differ with smoother perturbations.
 \bibliography{references}
 
 % ============================================================================
 \clearpage
 \appendix
+\section*{Appendix}
 
 \section{Secondary Figures}\label{app:secondary-figures}
 
@@ -283,6 +284,28 @@ Testing on settings where switch timing may matter more (larger $\epsilon$, CIFA
 \clearpage
 \section{Ablation Details}\label{app:ablation-details}
 
+\begin{table}[htbp]
+\centering
+\caption{Stability threshold sweep (ResNet-50, 100 images, 15K budget). Bold: selected $S$.}
+\label{tab:simba-s-sweep}\label{tab:square-s-sweep}
+\small
+\begin{tabular}{@{}llll@{\hspace{1.5em}}llll@{}}
+\toprule
+\multicolumn{4}{c}{SimBA} & \multicolumn{4}{c}{Square Attack (CE)} \\
+\cmidrule(r){1-4} \cmidrule(l{-0.6em}){5-8}
+$S$ & Succ. & Mean & Median & $S$ & Succ. & Mean & Median \\
+\midrule
+2 & 84.0\% & 4,860 & 4,108 & 2 & 97.1\% & 1,917 & 779 \\
+3 & 84.2\% & 4,814 & 3,905 & 3 & 97.1\% & 1,929 & 774 \\
+5 & 85.0\% & 4,952 & 4,286 & 5 & 97.1\% & 2,004 & 754 \\
+8 & 85.1\% & 4,915 & 4,144 & \textbf{8} & \textbf{98.1\%} & \textbf{1,780} & \textbf{753} \\
+\textbf{10} & \textbf{85.1\%} & \textbf{4,889} & \textbf{4,075} & 10 & 96.1\% & 1,719 & 582 \\
+12 & 84.0\% & 4,832 & 4,143 & 12 & 97.0\% & 1,850 & 633 \\
+15 & 85.0\% & 4,956 & 4,366 & 15 & 96.0\% & 1,910 & 652 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{../results/figures_target_overlap/fig_target_overlap.pdf}
@@ -297,46 +320,6 @@ Testing on settings where switch timing may matter more (larger $\epsilon$, CIFA
 \label{fig:s-ablation}
 \end{figure}
 
-\begin{table}[htbp]
-\centering
-\caption{SimBA stability threshold sweep (ResNet-50, 100 images, 15K budget).}
-\label{tab:simba-s-sweep}
-\small
-\begin{tabular}{@{}llll@{}}
-\toprule
-$S$ & Success Rate & Mean Iter. & Median Iter. \\
-\midrule
-2 & 84.0\% & 4,860 & 4,108 \\
-3 & 84.2\% & 4,814 & 3,905 \\
-5 & 85.0\% & 4,952 & 4,286 \\
-8 & 85.1\% & 4,915 & 4,144 \\
-\textbf{10} & \textbf{85.1\%} & \textbf{4,889} & \textbf{4,075} \\
-12 & 84.0\% & 4,832 & 4,143 \\
-15 & 85.0\% & 4,956 & 4,366 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{table}[htbp]
-\centering
-\caption{Square Attack stability threshold sweep (ResNet-50, 100 images, 15K budget).}
-\label{tab:square-s-sweep}
-\small
-\begin{tabular}{@{}llll@{}}
-\toprule
-$S$ & Success Rate & Mean Iter. & Median Iter. \\
-\midrule
-2 & 97.1\% & 1,917 & 779 \\
-3 & 97.1\% & 1,929 & 774 \\
-5 & 97.1\% & 2,004 & 754 \\
-\textbf{8} & \textbf{98.1\%} & \textbf{1,780} & \textbf{753} \\
-10 & 96.1\% & 1,719 & 582 \\
-12 & 97.0\% & 1,850 & 633 \\
-15 & 96.0\% & 1,910 & 652 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{../results/figures/multiseed/fig_multiseed_effect_size.pdf}
@@ -344,18 +327,5 @@ $S$ & Success Rate & Mean Iter. & Median Iter. \\
 \label{fig:multiseed}
 \end{figure}
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.85\textwidth]{../results/figures/robust/fig_lock_match.pdf}
-\caption{Lock-match rate on robust models. OTS rarely locks the oracle class, reflecting the flatter confidence landscape.}
-\label{fig:robust-lock-match}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.85\textwidth]{../results/figures_ablation_s_robust/fig_ablation_s_robust.pdf}
-\caption{Robust model ablation (Salman2020Do\_R50, 50 images, Square Attack CE). Left: success rate vs.\ $S$. Right: mean iterations vs.\ $S$.}
-\label{fig:robust-s-ablation}
-\end{figure}
 
 \end{document}
