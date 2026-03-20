@@ -290,6 +290,13 @@ class _OpportunisticSquare(torchattacks.Square):
                 if n_ex_total == 1 and accepted:
                     _check_stability(x_best, i_iter + 1)
 
+                # Fallback naive switch: if no perturbation was accepted but we've reached T
+                if (n_ex_total == 1 and not accepted
+                        and opportunistic and not switched_to_targeted
+                        and self._naive_switch_iteration is not None
+                        and i_iter + 1 >= self._naive_switch_iteration):
+                    _check_stability(x_best, i_iter + 1)
+
                 # After opportunistic switch, recompute margins with
                 # targeted semantics so the loop keeps optimising.
                 if switched_to_targeted and not was_switched:

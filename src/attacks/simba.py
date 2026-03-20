@@ -511,6 +511,25 @@ class SimBA(BaseAttack):
                     prev_max_class = current_max_class
                 continue  # Accept this perturbation and move to next iteration
 
+            # Fallback naive switch: if no perturbation was accepted this iteration
+            # but we've reached T, lock onto the leading class using current x_adv.
+            if (opportunistic and not switched_to_targeted
+                    and naive_switch_iteration is not None
+                    and iteration + 1 >= naive_switch_iteration):
+                with torch.no_grad():
+                    logits_cur = self.model(x_adv.unsqueeze(0))
+                    probs_cur = torch.nn.functional.softmax(logits_cur, dim=1)
+                    probs_excl_cur = probs_cur[0].clone()
+                    probs_excl_cur[y_true] = -1.0
+                    current_max_class = torch.argmax(probs_excl_cur).item()
+                targeted = True
+                target_class = torch.tensor(current_max_class, device=self.device)
+                current_target_conf = probs_cur[0][target_class].item()
+                switched_to_targeted = True
+                switch_iteration = iteration + 1
+                confidence_history['switch_iteration'] = switch_iteration
+                confidence_history['locked_class'] = current_max_class
+
         # Exhausted loop: record final state for benchmarking
         num_done = min(self.max_iterations, num_candidates)
         if track_confidence and (not confidence_history['iterations'] or confidence_history['iterations'][-1] != num_done):
